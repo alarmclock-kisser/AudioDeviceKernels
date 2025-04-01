@@ -268,6 +268,13 @@ namespace AudioDeviceKernels
 
 		public long PushData<T>(T[] data, int chunkSize, bool silent = false) where T : unmanaged
 		{
+			// Check ctx
+			if (this.Ctx == null)
+			{
+				this.Log("No context available", "", 1);
+				return 0;
+			}
+
 			var chunks = this.MakeChunks(data, chunkSize);
 
 			// Abort if no chunks
@@ -334,6 +341,13 @@ namespace AudioDeviceKernels
 
 		public long PushData<T>(List<T[]> chunks, bool silent = false) where T : unmanaged
 		{
+			// Check ctx
+			if (this.Ctx == null)
+			{
+				this.Log("No context available", "", 1);
+				return 0;
+			}
+
 			// Create CudaDeviceVariable array & int[]
 			CudaDeviceVariable<T>[] buffers = new CudaDeviceVariable<T>[chunks.Count];
 			int[] sizes = new int[chunks.Count];
@@ -391,6 +405,12 @@ namespace AudioDeviceKernels
 
 		public List<T[]> PullData<T>(long pointer, bool aggregate = false, bool silent = false) where T : unmanaged
 		{
+			// Check ctx
+			if (this.Ctx == null)
+			{
+				this.Log("No context available", "", 1);
+				return [];
+			}
 			// Lookup pointer
 			if (!this.IndexPointers.Contains(pointer) && !silent)
 			{
